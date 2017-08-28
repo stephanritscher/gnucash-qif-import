@@ -38,7 +38,7 @@ def lookup_account(root, name):
 
 
 def add_transaction(book, item, currency):
-    logging.info('Adding transaction for account "%s" (%s %s)..', item.account, item.amount,
+    logging.info('Adding transaction "%s" (%s %s)..', item.memo, item.amount,
                  currency.get_mnemonic())
     root = book.get_root_account()
     acc = lookup_account(root, 'Fremdkapital:Barverbindlichkeiten:Kreditkarten:DKB:VISA 3339')
