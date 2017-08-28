@@ -38,7 +38,7 @@ def lookup_account(root, name):
 
 
 def add_transaction(book, item, currency):
-    logging.info('Adding transaction for account "%s" (%s %s)..', item.account, item.split_amount,
+    logging.info('Adding transaction for account "%s" (%s %s)..', item.account, item.amount,
                  currency.get_mnemonic())
     root = book.get_root_account()
     acc = lookup_account(root, item.account)
@@ -53,11 +53,11 @@ def add_transaction(book, item, currency):
     s1 = Split(book)
     s1.SetParent(tx)
     s1.SetAccount(acc)
-    amount = int(Decimal(item.split_amount.replace(',', '.')) * currency.get_fraction())
+    amount = int(Decimal(item.amount) * currency.get_fraction())
     s1.SetValue(GncNumeric(amount, currency.get_fraction()))
     s1.SetAmount(GncNumeric(amount, currency.get_fraction()))
 
-    acc2 = lookup_account(root, item.split_category)
+    acc2 = lookup_account(root, 'Ausgleichskonto-EUR')
     s2 = Split(book)
     s2.SetParent(tx)
     s2.SetAccount(acc2)
@@ -135,11 +135,11 @@ def write_transactions_to_gnucash(gnucash_file, currency, all_items, dry_run=Fal
     imported_items = set()
     for item in all_items:
         if date_from and item.date < date_from:
-            logging.info('Skipping entry %s (%s)', item.date.strftime('%Y-%m-%d'), item.split_amount)
+            logging.info('Skipping entry %s (%s)', item.date.strftime('%Y-%m-%d'), item.amount)
             continue
         if item.as_tuple() in imported_items:
             logging.info('Skipping entry %s (%s) --- already imported!', item.date.strftime('%Y-%m-%d'),
-                         item.split_amount)
+                         item.amount)
             continue
         add_transaction(book, item, currency)
         imported_items.add(item.as_tuple())
@@ -195,4 +195,3 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     main(args)
-
