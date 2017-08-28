@@ -77,7 +77,7 @@ def parse_qif(infile):
             curItem = QifItem()
             curItem.account = account
         elif firstchar == 'D':
-            year, month, day = map(int, data.split('/'))
+            month, day, year = map(int, data.split('/'))
             curItem.date = datetime.datetime(year=year, month=month, day=day)
         elif firstchar == 'T':
             curItem.amount = data
