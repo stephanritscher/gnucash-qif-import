@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 '''
@@ -38,10 +38,12 @@ def lookup_account(root, name):
 
 
 def add_transaction(book, item, currency):
+    if item.split_amount == None: item.split_amount = item.amount
+    if item.split_category == None: item.split_category = 'Imbalance-EUR'
     logging.info('Adding transaction "%s" (%s %s)..', item.memo, item.amount,
                  currency.get_mnemonic())
     root = book.get_root_account()
-    acc = lookup_account(root, 'Fremdkapital:Barverbindlichkeiten:Kreditkarten:DKB:VISA 3339')
+    acc = lookup_account(root, item.account)
 
     tx = Transaction(book)
     tx.BeginEdit()
@@ -57,7 +59,7 @@ def add_transaction(book, item, currency):
     s1.SetValue(GncNumeric(amount, currency.get_fraction()))
     s1.SetAmount(GncNumeric(amount, currency.get_fraction()))
 
-    acc2 = lookup_account(root, 'Ausgleichskonto-EUR')
+    acc2 = lookup_account(root, item.split_category)
     s2 = Split(book)
     s2.SetParent(tx)
     s2.SetAccount(acc2)
